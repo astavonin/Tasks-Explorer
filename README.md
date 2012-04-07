@@ -17,7 +17,7 @@ Features:
 * Process's threads extended information;
 * Working without administrator's password (nevertheless, you must enter administrator password during installation);
 * The list of opened files used by process;
-* Auto-updating (Sparkle has been used).
+* Auto-updating ([Sparkle](http://wiki.github.com/andymatuschak/Sparkle/) has been used).
 
 Features that I'm planning to add into future releases:
 -------------------------------------------------------
