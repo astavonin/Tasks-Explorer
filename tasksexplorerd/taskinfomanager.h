@@ -36,7 +36,7 @@ void task_info_manager_free(void);
 int task_info_manager_update();
 size_t task_info_manager_get_tasks_count();
 void task_info_manager_get_tasks_pid(pid_t *pidArr);
-task_record_t* task_info_manager_find_task(pid_t pid);
+task_record_t* task_info_manager_find_task(pid_t pid, bool update_call_stack);
 host_record_t* task_manager_get_host_info();
 
 #endif //__TASKS_INFO_MANAGER__

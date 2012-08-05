@@ -104,7 +104,7 @@ task_info_base* task_explorer_base_info_1_svc(argp, rqstp)
      static task_info_base  result={};
      memset(&result, 0, sizeof(result));
 
-     task_record_t *task = task_info_manager_find_task(*argp);
+     task_record_t *task = task_info_manager_find_task(*argp, false);
      if (task != NULL) {
           result.pid = task->pid;
           result.ppid = task->ppid;
@@ -137,7 +137,7 @@ command_line* task_explorer_params_1_svc(argp, rqstp)
      size_t len = 0;
      int i;
 
-     task = task_info_manager_find_task(*argp);
+     task = task_info_manager_find_task(*argp, false);
      if (task != NULL) {
           if (task->argc > 0) {
                for (i = 0; i < task->argc; i++) {
@@ -190,7 +190,7 @@ env_list* task_explorer_env_list_1_svc(argp, rqstp)
           }
      }
 
-     task_record_t *task = task_info_manager_find_task(*argp);
+     task_record_t *task = task_info_manager_find_task(*argp, false);
      if (task != NULL) {
           char **envv = task->envv;
           int i, envc = task->envc;
@@ -215,7 +215,7 @@ task_explorer_dyninfo_1_svc(argp, rqstp)
      static task_info_dynamic  result;
      memset(&result, 0, sizeof(result));
 
-     task_record_t *task = task_info_manager_find_task(*argp);
+     task_record_t *task = task_info_manager_find_task(*argp, false);
      if (task != NULL) {      
           result.threads = task->threads;
           result.ports = task->ports;
@@ -278,7 +278,7 @@ struct svc_req *rqstp;
 	task_record_t *task;
 	size_t len = 0;
 
-	task = task_info_manager_find_task(*argp);
+	task = task_info_manager_find_task(*argp, false);
 	if (task != NULL) {
         const char *descr = man_info_get_descr_by_name(task->app_name);
         if (NULL != descr) {
@@ -319,7 +319,7 @@ struct svc_req *rqstp;
         result = 0;
     }
 
-	task = task_info_manager_find_task(*argp);
+	task = task_info_manager_find_task(*argp, true);
 	if (task != NULL) {
         threads = task->threads_arr;
 
@@ -368,7 +368,7 @@ struct svc_req *rqstp;
     task_record_t *task;
     thread_record_t *thread = 0;
 
-    task = task_info_manager_find_task(argp->pid);
+    task = task_info_manager_find_task(argp->pid, true);
     for (i = 0; i < task->threads; ++i) {
         if (task->threads_arr[i]->thread_id == argp->tid) {
             thread = task->threads_arr[i];
@@ -383,7 +383,10 @@ struct svc_req *rqstp;
             node = *nodep = calloc(1, sizeof(stack_info_node));
 
             sinfo = thread->call_stack[i];
-            node->func_name = strdup(sinfo->func_name);
+            if (sinfo->func_name)
+                node->func_name = strdup(sinfo->func_name);
+            else
+                node->func_name = strdup("Invalid entry");
             node->frame_addr = sinfo->frame_addr;
             node->return_addr = sinfo->return_addr;
 

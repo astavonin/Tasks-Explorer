@@ -76,6 +76,7 @@
 		16D52F3510E487CA00D4742D /* TreeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 16D52F3410E487CA00D4742D /* TreeView.xib */; };
 		16D52F7C10E48A4C00D4742D /* FlatView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 16D52F7B10E48A4C00D4742D /* FlatView.xib */; };
 		16D52F9410E48BE200D4742D /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 16D52F9310E48BE200D4742D /* MainWindowController.m */; };
+		4D01EDBB15C3E1C0008AB58A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D01EDBA15C3E1C0008AB58A /* CoreServices.framework */; };
 		4D99839813A28E8500877DD8 /* CallStack.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D99839613A28E8500877DD8 /* CallStack.xib */; };
 		4D99839B13A3B92100877DD8 /* StackInfoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D99839A13A3B92100877DD8 /* StackInfoController.m */; };
 		4DEB29D913A3D56600D794C7 /* stack_info.c in Sources */ = {isa = PBXBuildFile; fileRef = 4DEB29D713A3D56600D794C7 /* stack_info.c */; };
@@ -222,6 +223,7 @@
 		16D52F7910E48A4500D4742D /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/FlatView.xib; sourceTree = "<group>"; };
 		16D52F9210E48BE200D4742D /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
 		16D52F9310E48BE200D4742D /* MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowController.m; sourceTree = "<group>"; };
+		4D01EDBA15C3E1C0008AB58A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		4D99839713A28E8500877DD8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/CallStack.xib; sourceTree = "<group>"; };
 		4D99839913A3B92100877DD8 /* StackInfoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackInfoController.h; sourceTree = "<group>"; };
 		4D99839A13A3B92100877DD8 /* StackInfoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StackInfoController.m; sourceTree = "<group>"; };
@@ -246,6 +248,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D01EDBB15C3E1C0008AB58A /* CoreServices.framework in Frameworks */,
 				16822E4810CFEE7000627F5E /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -330,6 +333,7 @@
 		165D3DF710CEA07F0047AF58 = {
 			isa = PBXGroup;
 			children = (
+				4D01EDBA15C3E1C0008AB58A /* CoreServices.framework */,
 				16A4A34110FD6EFC00FF9FC8 /* Setup */,
 				16B4F9B010F0B5D900741229 /* Common */,
 				164F383210CFBEC80040C962 /* tasksexplorerd */,
@@ -744,7 +748,9 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "All Projects";
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -754,7 +760,9 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "All Projects";
+				SDKROOT = macosx;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -782,6 +790,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Tasks Explorer-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -790,7 +799,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "Tasks Explorer";
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = build;
 				USER_HEADER_SEARCH_PATHS = ./Common;
@@ -822,6 +831,7 @@
 				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = "Tasks Explorer-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -830,7 +840,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = "Tasks Explorer";
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = build;
 				USER_HEADER_SEARCH_PATHS = ./Common;
@@ -854,11 +864,12 @@
 				HEADER_SEARCH_PATHS = ./Common;
 				INCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "";
 				INSTALL_PATH = /usr/local/bin;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = tasksexplorerd;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = macosx10.7;
 				SYMROOT = build;
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "i386 x86_64";
@@ -878,10 +889,11 @@
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				HEADER_SEARCH_PATHS = ./Common;
 				INSTALL_PATH = /usr/local/bin;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = tasksexplorerd;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = macosx10.7;
 				SYMROOT = build;
 				USER_HEADER_SEARCH_PATHS = "";
 				VALID_ARCHS = "i386 x86_64";

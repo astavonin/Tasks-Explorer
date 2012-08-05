@@ -324,7 +324,7 @@ static int read_task_info(task_t task)
            break;
         }
 
-        task_info = task_info_manager_find_task(pid);
+        task_info = task_info_manager_find_task(pid, false);
         if (task_info == NULL) {
             task_info = malloc(sizeof(task_record_t));
             memset(task_info, 0, sizeof(task_record_t));
@@ -372,7 +372,6 @@ static int read_task_info(task_t task)
         }
 
         man_info_add_descr_by_name(task_info->app_name);
-        stack_info_update_task_stack(task_info);
 
         tmp_info = (task_record_t*)CFDictionaryGetValue(tasks_dict, task_info);
         if (tmp_info == NULL) {
@@ -590,7 +589,7 @@ static int update_threads_info(task_t task, task_record_t *tinfo)
 
           kr = mach_port_deallocate(mach_task_self(), threads_list[i]);
           if (kr != KERN_SUCCESS) {
-               syslog(LOG_INFO, "%s, error in mach_port_deallocate(): ", __FUNCTION__, mach_error_string(kr));
+               syslog(LOG_INFO, "%s, error in mach_port_deallocate(): %s", __FUNCTION__, mach_error_string(kr));
           }
      }
      kr = vm_deallocate(mach_task_self(), (vm_address_t)threads_list, threads_count * sizeof(thread_act_t));
@@ -767,14 +766,16 @@ static void extract_app_name(const char *all_arguments, app_path_name_t *path_na
 /// search for task_info_t structure with given pid 
 /// @param pid [in]
 /// @return pointer on task_info_t if structure with .pid==pid present in store, otherwise NULL.
-task_record_t* task_info_manager_find_task(pid_t pid)
+task_record_t* task_info_manager_find_task(pid_t pid, bool update_call_stack)
 {
-     task_record_t key, *retval=NULL;
+    task_record_t key, *retval=NULL;
 
-     key.pid = pid;
-     retval = (task_record_t*)CFDictionaryGetValue(tasks_dict, &key);
+    key.pid = pid;
+    retval = (task_record_t*)CFDictionaryGetValue(tasks_dict, &key);
+    if(retval && update_call_stack)
+        stack_info_update_task_stack(retval);
 
-     return retval;
+    return retval;
 }
 
 static void free_arr(void** arr, size_t len)
