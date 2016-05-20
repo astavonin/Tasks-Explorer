@@ -1,0 +1,21 @@
+Start testing: May 20 21:56 SGT
+----------------------------------------------------------
+1/1 Testing: TaskBaseTests
+1/1 Test: TaskBaseTests
+Command: "/Users/astavonin/Desktop/TasksExplorer2/bin/test_tasks_base"
+Directory: /Users/astavonin/Desktop/TasksExplorer2/build/tests
+"TaskBaseTests" start time: May 20 21:56 SGT
+Output:
+----------------------------------------------------------
+Running 1 test case...
+
+*** No errors detected
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"TaskBaseTests" end time: May 20 21:56 SGT
+"TaskBaseTests" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: May 20 21:56 SGT
