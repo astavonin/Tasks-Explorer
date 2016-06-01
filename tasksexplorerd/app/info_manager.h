@@ -8,7 +8,7 @@
 
 
 
-using TasksMapPtr = TasksMonitor::TasksMapPtr;
+using TasksMapPtr = tasks::TasksMonitor::TasksMapPtr;
 
 class InfoManager
 {
@@ -20,7 +20,7 @@ public:
     TasksMapPtr GetTasksSnapshot();
 
 private:
-    using TasksMonitorPtr = std::unique_ptr<TasksMonitor>;
+    using TasksMonitorPtr = std::unique_ptr<tasks::TasksMonitor>;
 
     mach_port_t m_hostPort;
 

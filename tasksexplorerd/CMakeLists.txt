@@ -4,7 +4,7 @@ set(PROJECT_NAME tasksexplorerd)
 project(${PROJECT_NAME})
 
 find_package(Boost REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS} include)
+include_directories(${Boost_INCLUDE_DIRS} include ../externals/spdlog/include)
 
 add_subdirectory(task)
 add_subdirectory(app)

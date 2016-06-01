@@ -2,7 +2,7 @@
 
 InfoManager::InfoManager()
     : m_hostPort(mach_host_self())
-    , m_tasksMonitor(new TasksMonitor(m_hostPort))
+    , m_tasksMonitor(new tasks::TasksMonitor(m_hostPort))
 {
 }
 
