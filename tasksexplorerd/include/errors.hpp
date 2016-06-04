@@ -11,11 +11,14 @@
 
 namespace err
 {
-using api_function = boost::errinfo_api_function;
+using api_function  = boost::errinfo_api_function;
+using errinfo_errno = boost::errinfo_errno;
 
 using mach_kern_ret   = boost::error_info<struct mach_error_code_, int>;
 using mach_err_desc   = boost::error_info<struct mach_err_desc_, char*>;
 using mach_error_info = boost::tuple<mach_kern_ret, mach_err_desc>;
+
+using description = boost::error_info<struct error_description_, std::string>;
 
 inline mach_error_info mach_error( int kr )
 {
@@ -24,6 +27,10 @@ inline mach_error_info mach_error( int kr )
 
 // Is used for informing about system API failure only
 struct sys_api_error : virtual std::exception, virtual boost::exception
+{
+};
+
+struct internal_error : virtual std::exception, virtual boost::exception
 {
 };
 };

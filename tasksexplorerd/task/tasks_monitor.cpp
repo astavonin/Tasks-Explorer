@@ -1,100 +1,47 @@
 #include <assert.h>
 #include <mach/host_priv.h>
-#include <functional>
-#include <iostream>
 
 #include <errors.hpp>
+
+#include "mach_helpers.h"
+#include "system_helpers.h"
 #include "tasks_monitor.h"
 
 namespace tasks
 {
-TasksMonitor::TasksMonitor( mach_port_t hostPort ) : m_hostPort( hostPort )
+TasksMonitor::TasksMonitor( mach_port_t hostPort, logger_ptr logger )
+    : m_hostPort( hostPort ), m_log( logger ), m_maxProcsCount( 500 )
 {
     assert( m_hostPort > 0 );
+    assert( m_log.get() != nullptr );
 }
 
 TasksMonitor::~TasksMonitor()
 {
 }
 
-struct mach_port_deleter
+TasksMonitor::TasksMapPtr TasksMonitor::GetTasks()
 {
-    mach_port_name_t port;
+    auto tasks = std::make_shared<TasksMap>();
+    auto procs = GetKinfoProcs();
 
-    mach_port_deleter( const mach_port_deleter& ) = delete;
-    mach_port_deleter& operator=( const mach_port_deleter& ) = delete;
-    mach_port_deleter( mach_port_deleter&& )                 = delete;
-
-    ~mach_port_deleter()
+    if( procs.size() <= 0 )
     {
-        mach_port_deallocate( mach_task_self(), port );
+        BOOST_THROW_EXCEPTION( err::internal_error() << err::description(
+                                   "Tasks array could not be empty" ) );
     }
-};
+    m_log->debug( "{}: tasks count {}", __func__, procs.size() );
 
-struct mach_array_deleter
-{
-    mach_port_name_t* arr;
-    size_t            len;
-
-    mach_array_deleter( const mach_array_deleter& ) = delete;
-    mach_array_deleter& operator=( const mach_array_deleter& ) = delete;
-    mach_array_deleter( mach_array_deleter&& )                 = delete;
-
-    ~mach_array_deleter()
+    for( auto &proc : procs )
     {
-        auto task_self = mach_task_self();
-
-        for( auto i = 0; i < len; ++i )
-            mach_port_deallocate( task_self, arr[i] );
-
-        vm_deallocate( task_self, (vm_address_t)arr,
-                       len * sizeof( mach_port_name_t ) );
-    }
-};
-
-TasksMonitor::TasksMapPtr TasksMonitor::GetTasksSnapshot()
-{
-    processor_set_t            pset;
-    processor_set_name_array_t psets;
-    mach_msg_type_number_t     pcnt, tcnt;
-    auto                       task_self = mach_task_self();
-
-    kern_return_t kr = host_processor_sets( m_hostPort, &psets, &pcnt );
-    if( kr != KERN_SUCCESS )
-    {
-        BOOST_THROW_EXCEPTION( err::sys_api_error()
-                               << err::api_function( "host_processor_sets" )
-                               << err::mach_error( kr ) );
-    }
-    mach_array_deleter psets_deleter{psets, pcnt};
-
-    for( int i = 0; i < pcnt; i++ )
-    {
-        kr = host_processor_set_priv( m_hostPort, psets[i], &pset );
-        if( kr != KERN_SUCCESS )
+        auto pid = proc.kp_proc.p_pid;
+        if( tasks->find( pid ) == tasks->end() )
         {
-            BOOST_THROW_EXCEPTION(
-                err::sys_api_error()
-                << err::api_function( "host_processor_set_priv" )
-                << err::mach_error( kr ) );
+            tasks->emplace(
+                std::make_pair( pid, std::make_shared<Task>( proc, m_log ) ) );
         }
-        mach_port_deleter pset_deleter{pset};
-
-        task_array_t tasks;
-        kr = processor_set_tasks( pset, &tasks, &tcnt );
-        if( kr != KERN_SUCCESS )
-        {
-            BOOST_THROW_EXCEPTION( err::sys_api_error()
-                                   << err::api_function( "processor_set_tasks" )
-                                   << err::mach_error( kr ) );
-        }
-        mach_array_deleter tasks_deleter{tasks, tcnt};
-
-        // for (j = 0; j < tcnt; j++)
-        // read_task_info(tasks[j]);
-        kr = mach_port_deallocate( mach_task_self(), pset );
     }
 
-    return TasksMapPtr();
+    return tasks;
 }
 }

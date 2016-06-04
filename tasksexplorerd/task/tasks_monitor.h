@@ -1,7 +1,7 @@
 #pragma once
 
 #include <mach/mach.h>
-#include <spdlog/spdlog.h>
+#include <logger.hpp>
 #include <map>
 #include "task.h"
 
@@ -14,13 +14,14 @@ public:
     using TasksMap    = std::map<pid_t, TaskPtr>;
     using TasksMapPtr = std::shared_ptr<TasksMap>;
 
-    TasksMonitor(mach_port_t hostPort);
+    TasksMonitor( mach_port_t hostPort, logger_ptr logger );
     ~TasksMonitor();
 
-    TasksMapPtr GetTasksSnapshot();
+    TasksMapPtr GetTasks();
 
 private:
-    mach_port_t                     m_hostPort;
-    std::shared_ptr<spdlog::logger> m_log;
+    mach_port_t m_hostPort;
+    logger_ptr  m_log;
+    size_t      m_maxProcsCount;
 };
 }

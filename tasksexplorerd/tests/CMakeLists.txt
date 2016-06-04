@@ -5,16 +5,23 @@ project(${PROJECT_NAME})
 
 find_package (Boost COMPONENTS unit_test_framework REQUIRED)
 
-set(test_tasks_base_source tasks_base.cpp)
-#set(test_main_source main.cpp)
+set(test_tasks_source tasks_base.cpp tasks_integration.cpp main.cpp)
+set(bench_tasks_source bench_task.cpp ../../externals/hayai/src/hayai_posix_main.cpp)
 
-add_executable(test_tasks_base ${test_tasks_base_source})
-set_property(TARGET test_tasks_base PROPERTY CXX_STANDARD 14)
-set_property(TARGET test_tasks_base PROPERTY CXX_STANDARD_REQUIRED ON)
+include_directories(../../externals/hayai/src)
 
-#add_executable(test_main ${test_main_source})
 
-target_link_libraries(test_tasks_base ${Boost_LIBRARIES} task)
-#target_link_libraries(test_tasks_base ${Boost_LIBRARIES} task)
+add_executable(test_tasks ${test_tasks_source})
+set_property(TARGET test_tasks PROPERTY CXX_STANDARD 14)
+set_property(TARGET test_tasks PROPERTY CXX_STANDARD_REQUIRED ON)
 
-add_test(NAME TaskBaseTests COMMAND test_tasks_base)
+add_executable(bench_tasks ${bench_tasks_source})
+set_property(TARGET bench_tasks PROPERTY CXX_STANDARD 14)
+set_property(TARGET bench_tasks PROPERTY CXX_STANDARD_REQUIRED ON)
+
+target_link_libraries(test_tasks ${Boost_LIBRARIES} task)
+target_link_libraries(bench_tasks ${Boost_LIBRARIES} task)
+
+add_test(NAME TaskTests COMMAND test_tasks)
+
+set_property(TEST TaskTests PROPERTY LABELS "unit")

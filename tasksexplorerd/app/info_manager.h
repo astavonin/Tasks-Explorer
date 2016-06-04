@@ -4,6 +4,9 @@
 #include <memory>
 #include <sys/types.h>
 #include <mach/mach.h>
+
+#include <logger.hpp>
+
 #include "tasks.h"
 
 
@@ -23,6 +26,7 @@ private:
     using TasksMonitorPtr = std::unique_ptr<tasks::TasksMonitor>;
 
     mach_port_t m_hostPort;
+    logger_ptr m_log;
 
     TasksMonitorPtr m_tasksMonitor;
 };

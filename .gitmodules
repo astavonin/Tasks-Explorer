@@ -1,3 +1,6 @@
 [submodule "externals/spdlog"]
 	path = externals/spdlog
 	url = https://github.com/astavonin/spdlog
+[submodule "externals/hayai"]
+	path = externals/hayai
+	url = https://github.com/nickbruun/hayai

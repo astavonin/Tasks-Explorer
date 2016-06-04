@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.4)
 set(PROJECT_NAME task)
 project(${PROJECT_NAME})
 
-set(task_sources task.cpp tasks_monitor.cpp)
+set(task_sources task.cpp tasks_monitor.cpp mach_helpers.cpp system_helpers.cpp)
 
 add_library(${PROJECT_NAME} STATIC ${task_sources})
 

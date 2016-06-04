@@ -1,13 +1,6 @@
 #pragma once
 
-#include <string>
 #include <spdlog/spdlog.h>
+#include <memory>
 
-void add_logger(const std::string &name)
-{
-}
-
-void init_logging()
-{
-}
-
+using logger_ptr = std::shared_ptr<spdlog::logger>;
