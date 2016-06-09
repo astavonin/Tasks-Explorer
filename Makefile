@@ -17,8 +17,11 @@ all: ./$(BUILD_DIR)/Makefile
 clean:
 	@ $(MAKE) -C $(BUILD_DIR) clean
 
+bench:
+	@  (cd $(BUILD_DIR) > /dev/null && ctest -L bench --verbose)
+
 test:
-	@  (cd $(BUILD_DIR) > /dev/null && ctest )
+	@  (cd $(BUILD_DIR) > /dev/null && ctest -L unit)
 
 distclean:
 	@  ($(MKDIR) $(BUILD_DIR) > /dev/null)

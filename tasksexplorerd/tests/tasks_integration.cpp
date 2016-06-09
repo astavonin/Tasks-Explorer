@@ -18,15 +18,10 @@ BOOST_AUTO_TEST_CASE( GetTasksList )
 
         auto tm     = tasks::TasksMonitor( mach_host_self(), logger );
         auto tasks  = tm.GetTasks();
-        //BOOST_REQUIRE( tasks.get() );
-        //BOOST_TEST( tasks->size() > 0 );
-        //// we always have tasks with PID 0 and 1
-        //BOOST_REQUIRE( tasks->find(0) != tasks->end() );
-        //BOOST_REQUIRE( tasks->find(1) != tasks->end() );
-
-        //auto task = tasks->begin();
-        //std::advance(task, rand() % tasks->size());
-        //std::cout << *task->second << std::endl;
+        BOOST_TEST( tasks.size() > 0 );
+        // we always have tasks with PID 0 and 1
+        BOOST_REQUIRE( tasks.find(0) != tasks.end() );
+        BOOST_REQUIRE( tasks.find(1) != tasks.end() );
     }
     catch( boost::exception &err )
     {

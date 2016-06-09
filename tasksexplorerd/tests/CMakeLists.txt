@@ -34,5 +34,7 @@ target_link_libraries(test_tasks ${Boost_LIBRARIES} task utils)
 target_link_libraries(bench_tasks ${Boost_LIBRARIES} task utils)
 
 add_test(NAME TaskTests COMMAND test_tasks)
-
 set_property(TEST TaskTests PROPERTY LABELS "unit")
+
+add_test(NAME TaskBench COMMAND bench_tasks)
+set_property(TEST TaskBench PROPERTY LABELS "bench")
