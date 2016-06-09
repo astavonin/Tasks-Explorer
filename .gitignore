@@ -1,12 +1,3 @@
 *.swp
 .DS_Store
-CMakeCache.txt
-CMakeFiles
-TestTestfile.cmake
-cmake_install.cmake
-CTestTestfile.cmake
-Makefile
-lib
-bin
 build
-Testing
