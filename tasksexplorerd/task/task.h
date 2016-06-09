@@ -8,11 +8,12 @@
 
 namespace tasks
 {
+class ProcArgs;
+
 class Task
 {
 public:
     Task( const kinfo_proc& proc, logger_ptr logger );
-    virtual ~Task();
 
     void Refresh( const kinfo_proc& proc );
 
@@ -26,15 +27,9 @@ private:
 private:
     const kinfo_proc m_proc;
 
-    pid_t                    m_pid;
-    std::string              m_name;
-    std::vector<std::string> m_argv;
-    std::vector<std::string> m_envv;
-    std::string              m_path2exec;
-    std::string              m_path2app;
-    std::string              m_bundlePathName;
-
-    logger_ptr m_log;
+    pid_t                     m_pid;
+    std::unique_ptr<ProcArgs> m_args;
+    logger_ptr                m_log;
 };
 
 std::ostream& operator<<( std::ostream& os, const Task& t );

@@ -10,19 +10,15 @@
 namespace tasks
 {
 TasksMonitor::TasksMonitor( mach_port_t hostPort, logger_ptr logger )
-    : m_hostPort( hostPort ), m_log( logger ), m_maxProcsCount( 500 )
+    : m_hostPort( hostPort ), m_log( logger )//, m_tasks( new TasksMap() )
 {
     assert( m_hostPort > 0 );
     assert( m_log.get() != nullptr );
 }
 
-TasksMonitor::~TasksMonitor()
+TasksMonitor::~TasksMonitor() {}
+TasksMonitor::TasksMap TasksMonitor::GetTasks()
 {
-}
-
-TasksMonitor::TasksMapPtr TasksMonitor::GetTasks()
-{
-    auto tasks = std::make_shared<TasksMap>();
     auto procs = GetKinfoProcs();
 
     if( procs.size() <= 0 )
@@ -34,14 +30,19 @@ TasksMonitor::TasksMapPtr TasksMonitor::GetTasks()
 
     for( auto &proc : procs )
     {
-        auto pid = proc.kp_proc.p_pid;
-        if( tasks->find( pid ) == tasks->end() )
+        auto pid  = proc.kp_proc.p_pid;
+        auto task = m_tasks.find( pid );
+        if( task == m_tasks.end() )
         {
-            tasks->emplace(
+            m_tasks.emplace(
                 std::make_pair( pid, std::make_shared<Task>( proc, m_log ) ) );
+        }
+        else
+        {
+            task->second->Refresh( proc );
         }
     }
 
-    return tasks;
+    return m_tasks;
 }
 }

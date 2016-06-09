@@ -4,3 +4,6 @@
 [submodule "externals/hayai"]
 	path = externals/hayai
 	url = https://github.com/nickbruun/hayai
+[submodule "externals/prettyprint"]
+	path = externals/prettyprint
+	url = https://github.com/louisdx/cxx-prettyprint

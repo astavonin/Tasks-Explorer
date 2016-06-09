@@ -17,11 +17,11 @@ public:
     TasksMonitor( mach_port_t hostPort, logger_ptr logger );
     ~TasksMonitor();
 
-    TasksMapPtr GetTasks();
+    TasksMap GetTasks();
 
 private:
+    TasksMap m_tasks;
     mach_port_t m_hostPort;
     logger_ptr  m_log;
-    size_t      m_maxProcsCount;
 };
 }

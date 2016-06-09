@@ -10,4 +10,4 @@ add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_sources})
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 14)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 
-target_link_libraries(${PROJECT_NAME} ${BOOST_LIBRARIES} task)
+target_link_libraries(${PROJECT_NAME} ${BOOST_LIBRARIES} task utils)

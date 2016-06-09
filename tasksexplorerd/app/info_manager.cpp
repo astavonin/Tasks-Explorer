@@ -13,5 +13,6 @@ InfoManager::~InfoManager()
 
 TasksMapPtr InfoManager::GetTasksSnapshot()
 {
-    return m_tasksMonitor->GetTasks();
+    return TasksMapPtr();
+    //return m_tasksMonitor->GetTasks();
 }
