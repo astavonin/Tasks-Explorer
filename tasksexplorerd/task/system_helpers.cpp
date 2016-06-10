@@ -39,10 +39,12 @@ proc_info_vec GetKinfoProcs()
     return procs;
 }
 
-std::vector<char> ReadProcArgs( pid_t pid, logger_ptr log )
+boost::optional<std::vector<char>> ReadProcArgs( pid_t pid, logger_ptr log )
 {
+    boost::optional<std::vector<char>> res;
+
     if( pid == 0 )  // we will not be able to extract data for kernel_task
-        return std::vector<char>( 0 );
+        return res;
 
     static int argmax = [&log]() -> int {
         int    name[] = {CTL_KERN, KERN_ARGMAX, 0};
@@ -63,19 +65,23 @@ std::vector<char> ReadProcArgs( pid_t pid, logger_ptr log )
     int               name[] = {CTL_KERN, KERN_PROCARGS2, pid};
     size_t            size   = argmax;
 
-    int ret = sysctl( name, 3, &procargv[0], &size, nullptr, 0 );
-    if( ret != 0 )
+    int err = sysctl( name, 3, &procargv[0], &size, nullptr, 0 );
+    if( err != 0 )
     {
         log->warn( "{}: unable to get environment for PID {}", __func__, pid );
+        procargv.resize( 0 );
+        res = procargv;
     }
-    procargv.resize( size );
 
-    return procargv;
+    return res;
 }
 
 ProcArgs ParseProcArgs( const std::vector<char> &procargv, logger_ptr /*log*/ )
 {
     ProcArgs parsedArgs;
+
+    if( procargv.size() < sizeof( int ) )
+        return parsedArgs;
 
     const char *all_arguments = &procargv[0];
     int         argc          = *( (int *)all_arguments );
@@ -87,13 +93,13 @@ ProcArgs ParseProcArgs( const std::vector<char> &procargv, logger_ptr /*log*/ )
     {
         auto nameBegin = parsedArgs.fullPathName.rfind( "/", appBegin ) + 1;
         parsedArgs.appName.assign( parsedArgs.fullPathName, nameBegin,
-                                    appBegin - nameBegin + sizeof( app ) - 1 );
+                                   appBegin - nameBegin + sizeof( app ) - 1 );
     }
     else
     {
         auto execBegin = parsedArgs.fullPathName.rfind( "/" ) + 1;
         parsedArgs.appName.assign( parsedArgs.fullPathName, execBegin,
-                                    appBegin - execBegin );
+                                   appBegin - execBegin );
     }
 
     all_arguments += sizeof( argc ) + parsedArgs.fullPathName.length();

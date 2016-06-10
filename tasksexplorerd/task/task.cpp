@@ -6,6 +6,7 @@
 #include <vector>
 #include "system_helpers.h"
 
+#include "utils.h"
 namespace tasks
 {
 Task::Task( std::uintmax_t stamp, const kinfo_proc& proc, logger_ptr logger )
@@ -30,13 +31,20 @@ void Task::ReadTaskInfo()
     }
     else
     {
-        auto rawArgs    = ReadProcArgs( m_pid, m_log );
-        auto parsedArgs = ParseProcArgs( rawArgs, m_log );
+        auto rawArgs = ReadProcArgs( m_pid, m_log );
+        if( rawArgs )
+        {
+            auto parsedArgs = ParseProcArgs( *rawArgs, m_log );
 
-        m_appName      = std::move( parsedArgs.appName );
-        m_fullPathName = std::move( parsedArgs.fullPathName );
-        m_argv         = std::move( parsedArgs.argv );
-        m_env          = std::move( parsedArgs.env );
+            m_appName      = std::move( parsedArgs.appName );
+            m_fullPathName = std::move( parsedArgs.fullPathName );
+            m_argv         = std::move( parsedArgs.argv );
+            m_env          = std::move( parsedArgs.env );
+        }
+        else
+        {
+            m_appName = m_proc.kp_proc.p_comm;
+        }
     }
 }
 

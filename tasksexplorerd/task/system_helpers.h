@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sys/sysctl.h>
+#include <boost/optional.hpp>
 #include <logger.hpp>
 #include <ostream>
 #include <string>
@@ -24,6 +25,6 @@ struct ProcArgs
 
 std::ostream& operator<<( std::ostream& os, const ProcArgs& p );
 
-std::vector<char> ReadProcArgs( pid_t pid, logger_ptr log );
+boost::optional<std::vector<char>> ReadProcArgs( pid_t pid, logger_ptr log );
 ProcArgs ParseProcArgs( const std::vector<char>& procargv, logger_ptr log );
 }
