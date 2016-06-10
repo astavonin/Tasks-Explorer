@@ -1,12 +1,13 @@
-#include <tasks.h>
-#include <utils.h>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <fstream>
 #include <hayai.hpp>
-#include <logger.hpp>
 #include "../task/system_helpers.h"
 #include "helpers.h"
+#include "logger.h"
+#include "tasks_monitor.h"
+#include "task.h"
+#include "utils.h"
 
 namespace fs = boost::filesystem;
 
@@ -37,7 +38,10 @@ BENCHMARK_F( CreateTaskFixture, CreateTask, 10, 10 )
 class ParseProcArgsFixture : public ::hayai::Fixture
 {
 public:
-    virtual void SetUp() { buff = tests::helpers::read_file( "procargv.bin" ); }
+    virtual void SetUp()
+    {
+        buff = tests::helpers::read_file( "procargv.bin" );
+    }
     std::vector<char> buff;
 };
 
@@ -60,4 +64,7 @@ public:
     std::unique_ptr<tasks::TasksMonitor> tm;
 };
 
-BENCHMARK_F( GetTasksFixture, GetTasks, 5, 1 ) { auto tasks = tm->GetTasks(); }
+BENCHMARK_F( GetTasksFixture, GetTasks, 5, 1 )
+{
+    auto tasks = tm->GetTasks();
+}

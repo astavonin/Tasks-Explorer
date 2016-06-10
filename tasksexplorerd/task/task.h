@@ -1,10 +1,9 @@
 #pragma once
 
 #include <sys/sysctl.h>
-#include <iostream>
-#include <logger.hpp>
 #include <string>
 #include <vector>
+#include "logger.h"
 
 namespace tasks
 {

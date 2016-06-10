@@ -1,13 +1,14 @@
 #pragma once
 
 #include <mach/mach.h>
-#include <logger.hpp>
 #include <map>
+#include "logger.h"
 #include "system_helpers.h"
-#include "task.h"
 
 namespace tasks
 {
+class Task;
+
 class TasksMonitor
 {
 public:

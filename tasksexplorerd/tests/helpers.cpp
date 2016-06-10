@@ -13,7 +13,7 @@ namespace helpers
 {
 std::vector<char> read_file( const std::string &name )
 {
-    fs::path exec( utils::GetExecDir() );
+    fs::path exec( utils::exec_dir() );
     fs::path f( name );
 
     std::fstream is( fs::canonical( exec.parent_path() / f ).string(),

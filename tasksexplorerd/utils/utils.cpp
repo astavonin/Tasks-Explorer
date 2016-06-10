@@ -4,7 +4,7 @@
 
 namespace utils
 {
-std::string GetExecDir()
+std::string exec_dir()
 {
 #ifdef __APPLE__
     char     path[FILENAME_MAX];
@@ -17,7 +17,7 @@ std::string GetExecDir()
 #endif
 }
 
-void HexDump( const char *desc, const void *addr, int len )
+void hex_dump( const char *desc, const void *addr, int len )
 {
     int            i;
     unsigned char  buff[17];

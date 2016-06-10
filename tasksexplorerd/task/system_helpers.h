@@ -2,12 +2,11 @@
 
 #include <sys/sysctl.h>
 #include <boost/optional.hpp>
-#include <logger.hpp>
 #include <ostream>
 #include <string>
-#include <type_traits>
 #include <unordered_map>
 #include <vector>
+#include "logger.h"
 
 namespace tasks
 {

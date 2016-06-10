@@ -4,6 +4,6 @@
 
 namespace utils
 {
-std::string GetExecDir();
-void HexDump( const char *desc, const void *addr, int len );
+std::string exec_dir();
+void hex_dump( const char *desc, const void *addr, int len );
 }

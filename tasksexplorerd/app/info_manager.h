@@ -4,10 +4,8 @@
 #include <memory>
 #include <sys/types.h>
 #include <mach/mach.h>
-
-#include <logger.hpp>
-
-#include "tasks.h"
+#include "logger.h"
+#include "tasks_monitor.h"
 
 
 
