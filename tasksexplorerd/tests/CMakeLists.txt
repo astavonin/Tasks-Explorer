@@ -11,7 +11,11 @@ set(test_tasks_source
     tasks_integration.cpp
     main.cpp
     )
+
 file(COPY procargv.bin DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/procargv.bin)
+
 
 set(bench_tasks_source
     helpers.cpp
