@@ -2,67 +2,59 @@
 #include <assert.h>
 #include <errors.hpp>
 #include <iostream>
+#include <prettyprint.hpp>
 #include <vector>
 #include "system_helpers.h"
 
 namespace tasks
 {
-Task::Task( const kinfo_proc& proc, logger_ptr logger )
-    : m_proc( proc ), m_log( logger )
+Task::Task( std::uintmax_t stamp, const kinfo_proc& proc, logger_ptr logger )
+    : m_proc( proc ), m_log( logger ), m_stamp( stamp )
 {
     assert( m_log.get() != nullptr );
 
     ReadTaskInfo();
 }
 
+Task::~Task()
+{
+}
+
 void Task::ReadTaskInfo()
 {
     m_pid = m_proc.kp_proc.p_pid;
 
-    static int argmax = [this]() -> int {
-        int    name[] = {CTL_KERN, KERN_ARGMAX, 0};
-        int    argmax = 0;
-        size_t size   = sizeof( argmax );
-
-        int ret = sysctl( name, 2, &argmax, &size, nullptr, 0 );
-        if( ret != 0 )
-        {
-            m_log->error( "{}: unable to get argmax", __func__ );
-        }
-        return argmax;
-    }();
-
-    std::vector<char> procargv( argmax );
-    int               name[] = {CTL_KERN, KERN_PROCARGS2, GetPID()};
-    size_t            size   = argmax;
-
-    int ret = sysctl( name, 3, &procargv[0], &size, nullptr, 0 );
-    if( ret != 0 )
+    if( GetPID() == 0 )
     {
-        if( GetPID() == 0 )
-        {
-            m_args          = std::make_unique<ProcArgs>();
-            m_args->appName = "kernel_task";
-        }
-        else
-        {
-            m_log->warn( "{}: unable to get environment for PID {}", __func__,
-                         GetPID() );
-        }
-        return;
+        m_appName = "kernel_task";
     }
-    procargv.resize( size );
+    else
+    {
+        auto rawArgs    = ReadProcArgs( m_pid, m_log );
+        auto parsedArgs = ParseProcArgs( rawArgs, m_log );
 
-    m_args = ParseProcArgs( procargv );
+        m_appName      = std::move( parsedArgs.appName );
+        m_fullPathName = std::move( parsedArgs.fullPathName );
+        m_argv         = std::move( parsedArgs.argv );
+        m_env          = std::move( parsedArgs.env );
+    }
 }
 
-pid_t Task::GetPID() const { return m_pid; }
-void Task::Refresh( const kinfo_proc& proc ) {}
+void Task::Refresh( std::uintmax_t stamp, const kinfo_proc& proc )
+{
+    m_stamp = stamp;
+}
+
 std::ostream& operator<<( std::ostream& os, const Task& t )
 {
     return os << "class Task(" << std::hex << &t << std::dec << ") \n{\n"
               << "m_pid: " << t.m_pid << "\n"
-              << "m_args: " << *t.m_args << "\n"
+              << "m_stamp: " << t.m_stamp << "\n"
+              << "m_appName: " << t.m_appName << "\n"
+              << "m_fullPathName: " << t.m_fullPathName << "\n"
+              << "m_argv(" << t.m_argv.size() << "):" << t.m_argv << "\n"
+              << "m_env(" << t.m_env.size() << "):" << t.m_env << "\n"
+              << "m_log: " << std::hex << t.m_log.get() << std::dec << "\n"
               << "}";
 }
 }

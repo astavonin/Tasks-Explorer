@@ -21,7 +21,7 @@ bench:
 	@  (cd $(BUILD_DIR) > /dev/null && ctest -L bench --verbose)
 
 test:
-	@  (cd $(BUILD_DIR) > /dev/null && ctest -L unit)
+	@  (cd $(BUILD_DIR) > /dev/null && ctest -L unit --verbose)
 
 distclean:
 	@  ($(MKDIR) $(BUILD_DIR) > /dev/null)

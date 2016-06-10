@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sys/sysctl.h>
+#include <logger.hpp>
 #include <ostream>
 #include <string>
 #include <type_traits>
@@ -23,5 +24,6 @@ struct ProcArgs
 
 std::ostream& operator<<( std::ostream& os, const ProcArgs& p );
 
-std::unique_ptr<ProcArgs> ParseProcArgs( const std::vector<char>& procargv );
+std::vector<char> ReadProcArgs( pid_t pid, logger_ptr log );
+ProcArgs ParseProcArgs( const std::vector<char>& procargv, logger_ptr log );
 }

@@ -39,30 +39,64 @@ proc_info_vec GetKinfoProcs()
     return procs;
 }
 
-std::unique_ptr<ProcArgs> ParseProcArgs( const std::vector<char> &procargv )
+std::vector<char> ReadProcArgs( pid_t pid, logger_ptr log )
 {
-    auto parsedArgs = std::make_unique<ProcArgs>();
+    if( pid == 0 )  // we will not be able to extract data for kernel_task
+        return std::vector<char>( 0 );
+
+    static int argmax = [&log]() -> int {
+        int    name[] = {CTL_KERN, KERN_ARGMAX, 0};
+        int    argmax = 0;
+        size_t size   = sizeof( argmax );
+
+        int ret = sysctl( name, 2, &argmax, &size, nullptr, 0 );
+        if( ret != 0 )
+        {
+            log->error( "{}: unable to get argmax, will use 1MB instead",
+                        __func__ );
+            argmax = 1024 * 1024;
+        }
+        return argmax;
+    }();
+
+    std::vector<char> procargv( argmax );
+    int               name[] = {CTL_KERN, KERN_PROCARGS2, pid};
+    size_t            size   = argmax;
+
+    int ret = sysctl( name, 3, &procargv[0], &size, nullptr, 0 );
+    if( ret != 0 )
+    {
+        log->warn( "{}: unable to get environment for PID {}", __func__, pid );
+    }
+    procargv.resize( size );
+
+    return procargv;
+}
+
+ProcArgs ParseProcArgs( const std::vector<char> &procargv, logger_ptr /*log*/ )
+{
+    ProcArgs parsedArgs;
 
     const char *all_arguments = &procargv[0];
     int         argc          = *( (int *)all_arguments );
-    parsedArgs->fullPathName.assign( all_arguments + sizeof( argc ) );
+    parsedArgs.fullPathName.assign( all_arguments + sizeof( argc ) );
 
     static const char app[]    = ".app";
-    auto              appBegin = parsedArgs->fullPathName.rfind( app );
+    auto              appBegin = parsedArgs.fullPathName.rfind( app );
     if( appBegin != std::string::npos )
     {
-        auto nameBegin = parsedArgs->fullPathName.rfind( "/", appBegin ) + 1;
-        parsedArgs->appName.assign( parsedArgs->fullPathName, nameBegin,
+        auto nameBegin = parsedArgs.fullPathName.rfind( "/", appBegin ) + 1;
+        parsedArgs.appName.assign( parsedArgs.fullPathName, nameBegin,
                                     appBegin - nameBegin + sizeof( app ) - 1 );
     }
     else
     {
-        auto execBegin = parsedArgs->fullPathName.rfind( "/" ) + 1;
-        parsedArgs->appName.assign( parsedArgs->fullPathName, execBegin,
+        auto execBegin = parsedArgs.fullPathName.rfind( "/" ) + 1;
+        parsedArgs.appName.assign( parsedArgs.fullPathName, execBegin,
                                     appBegin - execBegin );
     }
 
-    all_arguments += sizeof( argc ) + parsedArgs->fullPathName.length();
+    all_arguments += sizeof( argc ) + parsedArgs.fullPathName.length();
 
     while( *( ++all_arguments ) != '\0' )
     {
@@ -78,7 +112,7 @@ std::unique_ptr<ProcArgs> ParseProcArgs( const std::vector<char> &procargv )
         {
             std::string arg( ptr );
             ptr += arg.length() + 1;
-            parsedArgs->argv.push_back( std::move( arg ) );
+            parsedArgs.argv.push_back( std::move( arg ) );
         }
         all_arguments = ptr;
     }
@@ -94,7 +128,7 @@ std::unique_ptr<ProcArgs> ParseProcArgs( const std::vector<char> &procargv )
             else
             {
                 auto pos = strchr( all_arguments, '=' );
-                parsedArgs->env.emplace(
+                parsedArgs.env.emplace(
                     std::string( all_arguments, pos - all_arguments ),
                     std::string( pos + 1 ) );
             }

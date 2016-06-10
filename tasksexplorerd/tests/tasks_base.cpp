@@ -5,6 +5,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/test/unit_test.hpp>
 #include <fstream>
+#include <iostream>
 #include "helpers.h"
 #include "../task/system_helpers.h"
 
@@ -29,7 +30,11 @@ BOOST_AUTO_TEST_CASE( Helpers_GetKinfoProcs )
 BOOST_AUTO_TEST_CASE( Helpers_ParseProcArgs )
 {
     auto buff = tests::helpers::read_file( "procargv.bin" );
-    tasks::ParseProcArgs( buff );
+    auto args = tasks::ParseProcArgs( buff, nullptr );
+
+    BOOST_REQUIRE( args.appName == "Google Chrome Helper.app" );
+    BOOST_TEST( args.argv.size() == 16 );
+    BOOST_TEST( args.env.size() == 11 );
 }
 
 BOOST_AUTO_TEST_SUITE_END()

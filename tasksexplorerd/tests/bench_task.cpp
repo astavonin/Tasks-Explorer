@@ -31,7 +31,7 @@ public:
 
 BENCHMARK_F( CreateTaskFixture, CreateTask, 10, 10 )
 {
-    auto task = std::make_shared<tasks::Task>( tasks[1], logger );
+    auto task = std::make_shared<tasks::Task>( 0, tasks[2], logger );
 }
 
 class ParseProcArgsFixture : public ::hayai::Fixture
@@ -43,7 +43,7 @@ public:
 
 BENCHMARK_F( ParseProcArgsFixture, ParseProcArgs, 10, 10 )
 {
-    auto args = tasks::ParseProcArgs( buff );
+    auto args = tasks::ParseProcArgs( buff, nullptr );
 }
 
 class GetTasksFixture : public ::hayai::Fixture
@@ -60,4 +60,4 @@ public:
     std::unique_ptr<tasks::TasksMonitor> tm;
 };
 
-BENCHMARK_F( GetTasksFixture, GetTasks, 10, 1 ) { auto tasks = tm->GetTasks(); }
+BENCHMARK_F( GetTasksFixture, GetTasks, 5, 1 ) { auto tasks = tm->GetTasks(); }

@@ -3,6 +3,7 @@
 #include <mach/mach.h>
 #include <logger.hpp>
 #include <map>
+#include "system_helpers.h"
 #include "task.h"
 
 namespace tasks
@@ -16,12 +17,21 @@ public:
 
     TasksMonitor( mach_port_t hostPort, logger_ptr logger );
     ~TasksMonitor();
+    TasksMonitor( const TasksMonitor&& ) = delete;
+    TasksMonitor&& operator=( const TasksMonitor&& ) = delete;
+    TasksMonitor( const TasksMonitor& )              = delete;
+    TasksMonitor& operator=( const TasksMonitor& ) = delete;
 
-    TasksMap GetTasks();
+    TasksMapPtr GetTasks();
 
 private:
-    TasksMap m_tasks;
+    void RefreshTasksList( const proc_info_vec& procs );
+
+private:
+    TasksMapPtr m_tasks;
     mach_port_t m_hostPort;
-    logger_ptr  m_log;
+
+    logger_ptr     m_log;
+    std::uintmax_t m_stamp;
 };
 }
