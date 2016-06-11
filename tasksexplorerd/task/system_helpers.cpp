@@ -7,7 +7,7 @@
 
 namespace tasks
 {
-proc_info_vec GetKinfoProcs()
+proc_info_vec build_tasks_list()
 {
     static size_t maxProcsCount = 500;
 
@@ -39,7 +39,7 @@ proc_info_vec GetKinfoProcs()
     return procs;
 }
 
-boost::optional<std::vector<char>> ReadProcArgs( pid_t pid, logger_ptr log )
+boost::optional<std::vector<char>> read_proc_args( pid_t pid, logger_ptr log )
 {
     boost::optional<std::vector<char>> res;
 
@@ -76,33 +76,33 @@ boost::optional<std::vector<char>> ReadProcArgs( pid_t pid, logger_ptr log )
     return res;
 }
 
-ProcArgs ParseProcArgs( const std::vector<char> &procargv, logger_ptr /*log*/ )
+proc_args parse_proc_args( const std::vector<char> &procargv, logger_ptr /*log*/ )
 {
-    ProcArgs parsedArgs;
+    proc_args parsedArgs;
 
     if( procargv.size() < sizeof( int ) )
         return parsedArgs;
 
     const char *all_arguments = &procargv[0];
     int         argc          = *( (int *)all_arguments );
-    parsedArgs.fullPathName.assign( all_arguments + sizeof( argc ) );
+    parsedArgs.path_name.assign( all_arguments + sizeof( argc ) );
 
     static const char app[]    = ".app";
-    auto              appBegin = parsedArgs.fullPathName.rfind( app );
+    auto              appBegin = parsedArgs.path_name.rfind( app );
     if( appBegin != std::string::npos )
     {
-        auto nameBegin = parsedArgs.fullPathName.rfind( "/", appBegin ) + 1;
-        parsedArgs.appName.assign( parsedArgs.fullPathName, nameBegin,
+        auto nameBegin = parsedArgs.path_name.rfind( "/", appBegin ) + 1;
+        parsedArgs.app_name.assign( parsedArgs.path_name, nameBegin,
                                    appBegin - nameBegin + sizeof( app ) - 1 );
     }
     else
     {
-        auto execBegin = parsedArgs.fullPathName.rfind( "/" ) + 1;
-        parsedArgs.appName.assign( parsedArgs.fullPathName, execBegin,
+        auto execBegin = parsedArgs.path_name.rfind( "/" ) + 1;
+        parsedArgs.app_name.assign( parsedArgs.path_name, execBegin,
                                    appBegin - execBegin );
     }
 
-    all_arguments += sizeof( argc ) + parsedArgs.fullPathName.length();
+    all_arguments += sizeof( argc ) + parsedArgs.path_name.length();
 
     while( *( ++all_arguments ) != '\0' )
     {
@@ -145,11 +145,11 @@ ProcArgs ParseProcArgs( const std::vector<char> &procargv, logger_ptr /*log*/ )
     return parsedArgs;
 }
 
-std::ostream &operator<<( std::ostream &os, const ProcArgs &p )
+std::ostream &operator<<( std::ostream &os, const proc_args &p )
 {
-    os << "struct ProcArgs(" << std::hex << &p << std::dec << ") \n{\n"
-       << "appName: " << p.appName << "\n"
-       << "fullPathName: " << p.fullPathName << "\n"
+    os << "struct proc_args(" << std::hex << &p << std::dec << ") \n{\n"
+       << "app_name: " << p.app_name << "\n"
+       << "path_name: " << p.path_name << "\n"
        << "argv(" << p.argv.size() << "):" << p.argv << "\n"
        << "env(" << p.env.size() << "):" << p.env << "\n"
        << "}";

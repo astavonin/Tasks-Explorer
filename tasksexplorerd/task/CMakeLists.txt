@@ -4,8 +4,8 @@ set(PROJECT_NAME task)
 project(${PROJECT_NAME})
 
 set(task_sources
-    task.cpp
-    tasks_monitor.cpp
+    task_impl.cpp
+    tasks_monitor_impl.cpp
     system_helpers.cpp
     )
 

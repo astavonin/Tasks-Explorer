@@ -13,9 +13,9 @@ namespace fs = boost::filesystem;
 
 BOOST_AUTO_TEST_SUITE( TasksBaseTests )
 
-BOOST_AUTO_TEST_CASE( Helpers_GetKinfoProcs )
+BOOST_AUTO_TEST_CASE( helpers_build_tasks_list )
 {
-    auto kinfos = tasks::GetKinfoProcs();
+    auto kinfos = tasks::build_tasks_list();
 
     // We have severral processes for sure
     BOOST_REQUIRE( kinfos.size() );
@@ -27,12 +27,12 @@ BOOST_AUTO_TEST_CASE( Helpers_GetKinfoProcs )
         } ) != kinfos.end() );
 }
 
-BOOST_AUTO_TEST_CASE( Helpers_ParseProcArgs )
+BOOST_AUTO_TEST_CASE( helpers_parse_proc_args )
 {
     auto buff = tests::helpers::read_file( "procargv.bin" );
-    auto args = tasks::ParseProcArgs( buff, nullptr );
+    auto args = tasks::parse_proc_args( buff, nullptr );
 
-    BOOST_REQUIRE( args.appName == "Google Chrome Helper.app" );
+    BOOST_REQUIRE( args.app_name == "Google Chrome Helper.app" );
     BOOST_TEST( args.argv.size() == 16 );
     BOOST_TEST( args.env.size() == 11 );
 }

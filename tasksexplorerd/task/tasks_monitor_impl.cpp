@@ -1,29 +1,30 @@
-#include "tasks_monitor.h"
+#include "tasks_monitor_impl.h"
 #include <assert.h>
 #include <mach/host_priv.h>
+#include "../task/task_impl.h"
 #include "errors.h"
 #include "system_helpers.h"
-#include "task.h"
 
 namespace tasks
 {
-TasksMonitor::TasksMonitor( mach_port_t hostPort, logger_ptr logger )
+tasks_monitor_impl::tasks_monitor_impl( mach_port_t hostPort,
+                                        logger_ptr  logger )
     : m_hostPort( hostPort )
     , m_log( logger )
-    , m_tasks( new TasksMap() )
+    , m_tasks( new tasks_map() )
     , m_stamp( 0 )
 {
     assert( m_hostPort > 0 );
     assert( m_log.get() != nullptr );
 }
 
-TasksMonitor::~TasksMonitor()
+tasks_monitor_impl::~tasks_monitor_impl()
 {
 }
 
-TasksMonitor::TasksMapPtr TasksMonitor::GetTasks()
+tasks_monitor_impl::tasks_map_ptr tasks_monitor_impl::active_tasks()
 {
-    auto procs = GetKinfoProcs();
+    auto procs = build_tasks_list();
 
     if( procs.size() <= 0 )
     {
@@ -41,22 +42,26 @@ TasksMonitor::TasksMapPtr TasksMonitor::GetTasks()
         if( task == m_tasks->end() )
         {
             m_tasks->emplace( std::make_pair(
-                pid, std::make_shared<Task>( m_stamp, proc, m_log ) ) );
+                pid, std::make_shared<task_impl>( m_stamp, proc, m_log ) ) );
         }
         else
         {
-            task->second->Refresh( m_stamp, proc );
+            task->second->refresh( m_stamp, proc );
         }
     }
 
     for( auto it = m_tasks->begin(); it != m_tasks->end(); )
     {
-        if( it->second->GetStamp() != m_stamp )
+        if( it->second->stamp() != m_stamp )
             m_tasks->erase( it++ );
         else
             ++it;
     }
 
     return m_tasks;
+}
+
+void tasks_monitor_impl::dump( std::ostream &os ) const
+{
 }
 }

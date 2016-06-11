@@ -1,31 +1,27 @@
 #pragma once
 
+#include <mach/mach.h>
+#include <sys/types.h>
 #include <map>
 #include <memory>
-#include <sys/types.h>
-#include <mach/mach.h>
 #include "logger.h"
 #include "tasks_monitor.h"
 
-
-
-using TasksMapPtr = tasks::TasksMonitor::TasksMapPtr;
+using tasks_map_ptr = tasks::tasks_monitor::tasks_map_ptr;
 
 class InfoManager
 {
 public:
-
     InfoManager();
     ~InfoManager();
 
-    TasksMapPtr GetTasksSnapshot();
+    tasks_map_ptr GetTasksSnapshot();
 
 private:
-    using TasksMonitorPtr = std::unique_ptr<tasks::TasksMonitor>;
+    using tasks_monitor_ptr = std::unique_ptr<tasks::tasks_monitor>;
 
     mach_port_t m_hostPort;
-    logger_ptr m_log;
+    logger_ptr  m_log;
 
-    TasksMonitorPtr m_tasksMonitor;
+    tasks_monitor_ptr m_tasks_monitor;
 };
-

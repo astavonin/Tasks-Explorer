@@ -12,18 +12,18 @@ namespace tasks
 {
 using proc_info_vec = std::vector<kinfo_proc>;
 
-proc_info_vec GetKinfoProcs();
+proc_info_vec build_tasks_list();
 
-struct ProcArgs
+struct proc_args
 {
-    std::string              fullPathName;
-    std::string              appName;
+    std::string              path_name;
+    std::string              app_name;
     std::vector<std::string> argv;
     std::unordered_map<std::string, std::string> env;
 };
 
-std::ostream& operator<<( std::ostream& os, const ProcArgs& p );
+std::ostream& operator<<( std::ostream& os, const proc_args& p );
 
-boost::optional<std::vector<char>> ReadProcArgs( pid_t pid, logger_ptr log );
-ProcArgs ParseProcArgs( const std::vector<char>& procargv, logger_ptr log );
+boost::optional<std::vector<char>> read_proc_args( pid_t pid, logger_ptr log );
+proc_args parse_proc_args( const std::vector<char>& procargv, logger_ptr log );
 }
