@@ -56,25 +56,39 @@ void task_impl::refresh( std::uintmax_t stamp, const kinfo_proc& proc )
 
 std::string task_impl::name() const
 {
-    return "";
+    return m_app_name;
+}
+
+std::string task_impl::path_name() const
+{
+    return m_path_name;
+}
+
+pid_t task_impl::pid() const
+{
+    return m_pid;
+}
+
+std::vector<std::string> task_impl::argv() const
+{
+    return m_argv;
+}
+
+std::unordered_map<std::string, std::string> task_impl::envv() const
+{
+    return m_env;
 }
 
 void task_impl::dump( std::ostream& os ) const
 {
-}
-
-std::ostream& operator<<( std::ostream& os, const task& t )
-{
-    t.dump( os );
-    return os;
-    // return os << "class Task(" << std::hex << &t << std::dec << ") \n{\n"
-    //<< "m_pid: " << t.m_pid << "\n"
-    //<< "m_stamp: " << t.m_stamp << "\n"
-    //<< "m_app_name: " << t.m_app_name << "\n"
-    //<< "m_full_path_name: " << t.m_path_name << "\n"
-    //<< "m_argv(" << t.m_argv.size() << "):" << t.m_argv << "\n"
-    //<< "m_env(" << t.m_env.size() << "):" << t.m_env << "\n"
-    //<< "m_log: " << std::hex << t.m_log.get() << std::dec << "\n"
-    //<< "}";
+    os << "class Task(" << std::hex /*<< (int)this*/ << std::dec << ") \n{\n"
+       << "m_pid: " << m_pid << "\n"
+       << "m_stamp: " << m_stamp << "\n"
+       << "m_app_name: " << m_app_name << "\n"
+       << "m_full_path_name: " << m_path_name << "\n"
+       << "m_argv(" << m_argv.size() << "):" << m_argv << "\n"
+       << "m_env(" << m_env.size() << "):" << m_env << "\n"
+       << "m_log: " << std::hex << m_log.get() << std::dec << "\n"
+       << "}";
 }
 }

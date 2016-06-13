@@ -2,6 +2,7 @@
 #include <boost/exception/all.hpp>
 #include <boost/test/unit_test.hpp>
 #include <memory>
+#include "../task/task_impl.h"
 #include "../task/tasks_monitor_impl.h"
 
 BOOST_AUTO_TEST_SUITE( TasksIntegrationTests )

@@ -1,4 +1,5 @@
 #pragma once
+#include <type_traits>
 
 namespace common
 {
@@ -9,10 +10,13 @@ public:
     {
     }
     virtual void dump( std::ostream& os ) const = 0;
-
-    friend std::ostream& operator<<( std::ostream& os, const dumpable& d );
 };
 
-std::ostream&
-operator<<( std::ostream& os, const dumpable& d );
+template <typename T,
+          typename = std::enable_if_t<std::is_base_of<dumpable, T>::value>>
+std::ostream& operator<<( std::ostream& os, const T& d )
+{
+    d.dump( os );
+    return os;
+}
 }

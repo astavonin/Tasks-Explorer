@@ -3,7 +3,6 @@
 #include <utils.h>
 #include <prettyprint.hpp>
 #include <string>
-#include <unordered_map>
 
 namespace tasks
 {
