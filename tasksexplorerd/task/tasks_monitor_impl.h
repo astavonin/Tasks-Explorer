@@ -22,7 +22,7 @@ public:
 
 private:
     tasks_map_ptr m_tasks;
-    mach_port_t m_hostPort;
+    mach_port_t   m_hostPort;
 
     logger_ptr     m_log;
     std::uintmax_t m_stamp;

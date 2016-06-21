@@ -1,7 +1,7 @@
 #include "tasks_monitor_impl.h"
 #include <assert.h>
 #include <mach/host_priv.h>
-#include "../task/task_impl.h"
+#include "task_impl.h"
 #include "errors.h"
 #include "system_helpers.h"
 
@@ -46,13 +46,15 @@ tasks_monitor_impl::tasks_map_ptr tasks_monitor_impl::active_tasks()
         }
         else
         {
-            task->second->refresh( m_stamp, proc );
+            auto task_i = std::static_pointer_cast<task_impl>( task->second );
+            task_i->refresh( m_stamp, proc );
         }
     }
 
     for( auto it = m_tasks->begin(); it != m_tasks->end(); )
     {
-        if( it->second->stamp() != m_stamp )
+        auto task_i = std::static_pointer_cast<task_impl>( it->second );
+        if( task_i->stamp() != m_stamp )
             m_tasks->erase( it++ );
         else
             ++it;

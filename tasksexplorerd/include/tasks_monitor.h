@@ -6,12 +6,12 @@
 
 namespace tasks
 {
-class task_impl;
+class task;
 
 class tasks_monitor : public common::dumpable
 {
 public:
-    using task_ptr      = std::shared_ptr<task_impl>;
+    using task_ptr      = std::shared_ptr<task>;
     using tasks_map     = std::map<pid_t, task_ptr>;
     using tasks_map_ptr = std::shared_ptr<tasks_map>;
 
