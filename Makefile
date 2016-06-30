@@ -6,6 +6,7 @@ SHELL := /bin/bash
 RM    := rm -rf
 MKDIR := mkdir -p
 BUILD_DIR := build
+GENERATOR ?= Xcode
 
 all: ./$(BUILD_DIR)/Makefile
 	@ $(MAKE) -C $(BUILD_DIR) -j8
@@ -23,17 +24,9 @@ bench:
 test:
 	@  (cd $(BUILD_DIR) > /dev/null && ctest -L unit --verbose)
 
-distclean:
+workspace:
 	@  ($(MKDIR) $(BUILD_DIR) > /dev/null)
-	@  (cd $(BUILD_DIR) > /dev/null 2>&1 && cmake .. > /dev/null 2>&1)
-	@- $(MAKE) --silent -C $(BUILD_DIR) clean || true
-	@- $(RM) ./$(BUILD_DIR)/Makefile
-	@- $(RM) ./$(BUILD_DIR)/CMake*
-	@- $(RM) ./$(BUILD_DIR)/cmake.*
-	@- $(RM) ./$(BUILD_DIR)/*.cmake
-	@- $(RM) ./$(BUILD_DIR)/*.txt
+	@ (cd $(BUILD_DIR) > /dev/null && cmake -G $(GENERATOR) ..)
 
-ifeq ($(findstring distclean,$(MAKECMDGOALS)),)
-	$(MAKECMDGOALS): ./$(BUILD_DIR)/Makefile
-	@ $(MAKE) -C $(BUILD_DIR) $(MAKECMDGOALS)
-endif
+distclean:
+	@- $(RM) -rf ./$(BUILD_DIR)
