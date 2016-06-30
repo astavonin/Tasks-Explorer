@@ -81,7 +81,7 @@ std::unordered_map<std::string, std::string> task_impl::envv() const
 
 void task_impl::dump( std::ostream& os ) const
 {
-    os << "class Task(" << std::hex /*<< (int)this*/ << std::dec << ") \n{\n"
+    os << "class Task(0x" << std::hex << (long)this << std::dec << ") \n{\n"
        << "m_pid: " << m_pid << "\n"
        << "m_stamp: " << m_stamp << "\n"
        << "m_app_name: " << m_app_name << "\n"

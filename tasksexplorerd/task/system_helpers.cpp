@@ -66,39 +66,37 @@ boost::optional<std::vector<char>> read_proc_args( pid_t pid, logger_ptr log )
 
     int err = sysctl( name, 3, &procargv[0], &size, nullptr, 0 );
     if( err != 0 )
-    {
         log->warn( "{}: unable to get environment for PID {}", __func__, pid );
-        procargv.resize( 0 );
+    else
         res = procargv;
-    }
 
     return res;
 }
 
-proc_args parse_proc_args( const std::vector<char> &procargv, logger_ptr /*log*/ )
+proc_args parse_proc_args( const std::vector<char> &procargv,
+                           logger_ptr /*log*/ )
 {
     proc_args parsedArgs;
 
-    if( procargv.size() < sizeof( int ) )
-        return parsedArgs;
+    if( procargv.size() < sizeof( int ) ) return parsedArgs;
 
     const char *all_arguments = &procargv[0];
     int         argc          = *( (int *)all_arguments );
     parsedArgs.path_name.assign( all_arguments + sizeof( argc ) );
 
-    static const char app[]    = ".app";
+    static const char app[]    = ".app/";
     auto              appBegin = parsedArgs.path_name.rfind( app );
     if( appBegin != std::string::npos )
     {
         auto nameBegin = parsedArgs.path_name.rfind( "/", appBegin ) + 1;
         parsedArgs.app_name.assign( parsedArgs.path_name, nameBegin,
-                                   appBegin - nameBegin + sizeof( app ) - 1 );
+                                    appBegin - nameBegin + sizeof( app ) - 1 );
     }
     else
     {
         auto execBegin = parsedArgs.path_name.rfind( "/" ) + 1;
         parsedArgs.app_name.assign( parsedArgs.path_name, execBegin,
-                                   appBegin - execBegin );
+                                    appBegin - execBegin );
     }
 
     all_arguments += sizeof( argc ) + parsedArgs.path_name.length();

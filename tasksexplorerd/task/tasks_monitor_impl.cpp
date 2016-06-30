@@ -24,7 +24,7 @@ tasks_monitor_impl::~tasks_monitor_impl()
 {
 }
 
-tasks_monitor_impl::tasks_map_ptr tasks_monitor_impl::active_tasks()
+tasks_map_ptr tasks_monitor_impl::active_tasks()
 {
     auto procs = build_tasks_list();
 
@@ -76,5 +76,10 @@ tasks_monitor_impl::tasks_map_ptr tasks_monitor_impl::active_tasks()
 
 void tasks_monitor_impl::dump( std::ostream &os ) const
 {
+}
+
+tasks_monitor_ptr create_tasks_monitor( mach_port_t hostPort, logger_ptr logger )
+{
+    return std::make_unique<tasks_monitor_impl>( hostPort, logger );
 }
 }
