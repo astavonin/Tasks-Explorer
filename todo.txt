@@ -1,0 +1,9 @@
+
+(A) add @RPC communication
+(B) create non-root @client-lib @RPC
+(C) create @UI app
+(D) add @threads @monitoring
+(D) add time consuming @monitoring
+(D) extend @monitoring with  @thread call stacks extraction
+(F) add Python bindings to the @client-lib
+
