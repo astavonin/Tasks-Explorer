@@ -1,0 +1,28 @@
+
+syntax = "proto3";
+
+option java_package = "io.grpc.examples";
+option objc_class_prefix = "HLW";
+
+package te_rpc;
+
+service TEDataProvider {
+  rpc ActiveTasks (InfoType) returns (stream Task) {}
+}
+
+message InfoType {
+  enum Type {
+    SHORT = 0;
+    FULL = 1;
+  }
+  Type type = 1;
+}
+
+message Task {
+  uint32 pid = 1;
+  string name = 2;
+  string path_name = 3;
+  repeated string args = 4;
+  map<string, string> envs = 5;
+}
+

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.4)
 
 if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR} )
     message( FATAL_ERROR "In-source builds not allowed. Please make a new directory and run CMake from there. You may need to remove CMakeCache.txt." )
@@ -26,6 +26,7 @@ SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
 
 enable_testing()
 
-
-add_subdirectory( tasksexplorerd build )
+add_subdirectory( rpc )
+add_subdirectory( tasksexplorerd )
+add_subdirectory( client/console )
 
