@@ -90,7 +90,7 @@ proc_args parse_proc_args( const std::vector<char> &procargv,
     {
         auto nameBegin = parsedArgs.path_name.rfind( "/", appBegin ) + 1;
         parsedArgs.app_name.assign( parsedArgs.path_name, nameBegin,
-                                    appBegin - nameBegin + sizeof( app ) - 1 );
+                                    appBegin - nameBegin + sizeof( app ) - 2 );
     }
     else
     {

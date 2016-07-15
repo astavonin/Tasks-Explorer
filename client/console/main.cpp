@@ -25,6 +25,7 @@ public:
     {
         InfoType request;
         request.set_type( te_rpc::InfoType_Type_SHORT );
+        request.set_slice( te_rpc::InfoType_Slice_NEW );
 
         ClientContext context;
         auto          stream = stub_->ActiveTasks( &context, request );
@@ -32,7 +33,17 @@ public:
         Task task;
         while( stream->Read( &task ) )
         {
-            std::cout << task.name() << std::endl;
+            std::cout << task.name() << "[";
+            //for( auto env : task.envs() )
+            //{
+                //std::cout << env.first << ":" << env.second << std::endl;
+            //}
+            //std::cout << "]" << std::endl << "[";
+            //for( auto arg : task.args() )
+            //{
+                //std::cout << arg << std::endl;
+            //}
+            std::cout << "]" << std::endl;
         }
     }
 

@@ -15,7 +15,12 @@ message InfoType {
     SHORT = 0;
     FULL = 1;
   }
+  enum Slice {
+    ALL = 0;
+    NEW = 1;
+  }
   Type type = 1;
+  Slice slice = 2;
 }
 
 message Task {

@@ -7,7 +7,7 @@ find_package(Protobuf REQUIRED)
 
 include_directories(${PROTOBUF_INCLUDE_DIRS} ${GENERATED_PROTOBUF_PATH})
 
-set(${PROJECT_NAME}_sources main.cpp info_manager.cpp)
+set(${PROJECT_NAME}_sources main.cpp info_manager.cpp te_service_impl.cpp)
 
 add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_sources})
 
