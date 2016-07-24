@@ -1,0 +1,12 @@
+IndentWidth: 4
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AllowShortFunctionsOnASingleLine : false
+SpaceBeforeParens: Never
+SpacesInParentheses: true
+UseTab: Never
+AccessModifierOffset: -4
+AlwaysBreakTemplateDeclarations: true
+Standard: C++11
+BreakConstructorInitializersBeforeComma: true
+BreakBeforeBraces: Allman
