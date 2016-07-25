@@ -28,15 +28,16 @@ foreach(_f ${proto_files})
         COMMAND ${PROTOBUF_PROTOC_EXECUTABLE}
         ARGS "--proto_path=${PROTO_PATH}"
              "--grpc_out=${GENERATED_PROTOBUF_PATH}"
-             "--plugin=protoc-gen-grpc=/usr/local/bin/GRPC_CPP_PLUGIN"
+             "--plugin=protoc-gen-grpc=/usr/local/bin/grpc_cpp_plugin"
              "${PROTO_PATH}/${_f}"
         )
     set(GENERATED_PROTOBUF_FILES ${proto_gen_files})
 endforeach()
 
+find_package(GRPC REQUIRED)
 
-include_directories(${GENERATED_PROTOBUF_PATH})
-link_libraries(grpc++_unsecure grpc gpr ${PROTOBUF_LIBRARY})
+include_directories(${GENERATED_PROTOBUF_PATH} ${PROTOBUF_INCLUDE_DIRS})
+link_libraries(${GRPC_LIBRARIES} ${PROTOBUF_LIBRARY})
 
 add_library(${PROJECT_NAME} STATIC ${GENERATED_PROTOBUF_FILES})
 

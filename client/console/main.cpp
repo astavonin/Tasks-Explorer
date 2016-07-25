@@ -1,8 +1,8 @@
+#include "rpc.grpc.pb.h"
 #include <grpc++/grpc++.h>
 #include <iostream>
 #include <memory>
 #include <string>
-#include "rpc.grpc.pb.h"
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -27,6 +27,8 @@ public:
         request.set_type( te_rpc::InfoType_Type_SHORT );
         request.set_slice( te_rpc::InfoType_Slice_NEW );
 
+        InfoType t;
+
         ClientContext context;
         auto          stream = stub_->ActiveTasks( &context, request );
 
@@ -34,14 +36,14 @@ public:
         while( stream->Read( &task ) )
         {
             std::cout << task.name() << "[";
-            //for( auto env : task.envs() )
+            // for( auto env : task.envs() )
             //{
-                //std::cout << env.first << ":" << env.second << std::endl;
+            // std::cout << env.first << ":" << env.second << std::endl;
             //}
-            //std::cout << "]" << std::endl << "[";
-            //for( auto arg : task.args() )
+            // std::cout << "]" << std::endl << "[";
+            // for( auto arg : task.args() )
             //{
-                //std::cout << arg << std::endl;
+            // std::cout << arg << std::endl;
             //}
             std::cout << "]" << std::endl;
         }
@@ -51,7 +53,7 @@ private:
     std::unique_ptr<TEDataProvider::Stub> stub_;
 };
 
-int main( int argc, char* argv[] )
+int main( int argc, char *argv[] )
 {
     TEClient te( grpc::CreateChannel( "localhost:50051",
                                       grpc::InsecureChannelCredentials() ) );

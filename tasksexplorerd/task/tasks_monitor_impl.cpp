@@ -1,11 +1,11 @@
 #include "tasks_monitor_impl.h"
-#include <assert.h>
-#include <mach/host_priv.h>
-#include <list>
 #include "errors.h"
 #include "system_helpers.h"
 #include "task_impl.h"
 #include "utils.h"
+#include <assert.h>
+#include <list>
+#include <mach/host_priv.h>
 
 namespace tasks
 {
@@ -30,8 +30,7 @@ tasks_map_ptr tasks_monitor_impl::active_tasks()
 
     if( procs.size() <= 0 )
     {
-        BOOST_THROW_EXCEPTION( err::internal_error() << err::description(
-                                   "Tasks array could not be empty" ) );
+        BOOST_THROW_EXCEPTION( err::internal_error() << err::description("Tasks array could not be empty" ) );
     }
     m_log->debug( "{}: tasks count {}", __func__, procs.size() );
 
@@ -78,7 +77,8 @@ void tasks_monitor_impl::dump( std::ostream &os ) const
 {
 }
 
-tasks_monitor_ptr create_tasks_monitor( mach_port_t hostPort, logger_ptr logger )
+tasks_monitor_ptr create_tasks_monitor( mach_port_t hostPort,
+                                        logger_ptr  logger )
 {
     return std::make_unique<tasks_monitor_impl>( hostPort, logger );
 }
