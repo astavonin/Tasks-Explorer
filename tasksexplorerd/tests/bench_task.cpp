@@ -1,13 +1,14 @@
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
-#include <fstream>
-#include <hayai.hpp>
 #include "../task/system_helpers.h"
+#include "../task/task_impl.h"
+#include "../task/tasks_monitor_impl.h"
 #include "helpers.h"
 #include "logger.h"
-#include "../task/tasks_monitor_impl.h"
-#include "../task/task_impl.h"
 #include "utils.h"
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+#include <ctime>
+#include <fstream>
+#include <hayai.hpp>
 
 namespace fs = boost::filesystem;
 
@@ -32,7 +33,8 @@ public:
 
 BENCHMARK_F( CreateTaskFixture, CreateTask, 10, 10 )
 {
-    auto task = std::make_shared<tasks::task_impl>( 0, tasks[2], logger );
+    auto task = std::make_shared<tasks::task_impl>(
+        0, timeval { 0, 0 }, tasks[2], logger );
 }
 
 class ParseProcArgsFixture : public ::hayai::Fixture
@@ -58,9 +60,10 @@ public:
         logger = spdlog::get( "active_tasks" );
         if( !logger.get() )
             logger = spdlog::stdout_logger_mt( "active_tasks", true );
-        tm = std::make_unique<tasks::tasks_monitor_impl>( mach_host_self(), logger );
+        tm = std::make_unique<tasks::tasks_monitor_impl>( mach_host_self(),
+                                                          logger );
     }
-    logger_ptr                           logger;
+    logger_ptr                            logger;
     std::unique_ptr<tasks::tasks_monitor> tm;
 };
 

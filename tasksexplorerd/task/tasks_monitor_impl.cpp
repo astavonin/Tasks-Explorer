@@ -4,6 +4,7 @@
 #include "task_impl.h"
 #include "utils.h"
 #include <assert.h>
+#include <ctime>
 #include <list>
 #include <mach/host_priv.h>
 
@@ -24,38 +25,46 @@ tasks_monitor_impl::~tasks_monitor_impl()
 {
 }
 
-tasks_map_ptr tasks_monitor_impl::active_tasks()
+void tasks_monitor_impl::refresh_tasks( tasks_refresh_list &tl )
 {
+    timeval now;
+    gettimeofday( &now, NULL );
+
     auto procs = build_tasks_list();
 
     if( procs.size() <= 0 )
     {
-        BOOST_THROW_EXCEPTION( err::internal_error() << err::description("Tasks array could not be empty" ) );
+        BOOST_THROW_EXCEPTION( err::internal_error() << err::description(
+                                   "Tasks array could not be empty" ) );
     }
     m_log->debug( "{}: tasks count {}", __func__, procs.size() );
 
-    m_stamp++;
-
-    std::list<std::future<std::shared_ptr<task_impl>>> tasks_list;
+    timeval elapsed;
+    timersub( &now, &m_refresh_time, &elapsed );
     for( auto &proc : procs )
     {
         auto pid  = proc.kp_proc.p_pid;
         auto task = m_tasks->find( pid );
         if( task == m_tasks->end() )
         {
-            auto f = utils::async( [&proc, this ]() -> auto {
-                return std::make_shared<task_impl>( m_stamp, proc, m_log );
+            auto f = utils::async( [&proc, &elapsed, this ]() -> auto {
+                return std::make_shared<task_impl>( m_stamp, elapsed, proc, m_log );
             } );
-            tasks_list.emplace_back( std::move( f ) );
+            tl.emplace_back( std::move( f ) );
         }
         else
         {
             auto task_i = std::static_pointer_cast<task_impl>( task->second );
-            task_i->refresh( m_stamp, proc );
+
+            task_i->refresh( m_stamp, elapsed, proc );
         }
     }
+    m_refresh_time = now;
+}
 
-    for( auto &tf : tasks_list )
+void tasks_monitor_impl::update_tasks_map( tasks_refresh_list &tl )
+{
+    for( auto &tf : tl )
     {
         auto t = tf.get();
         m_tasks->insert( std::make_pair( t->pid(), t ) );
@@ -69,6 +78,15 @@ tasks_map_ptr tasks_monitor_impl::active_tasks()
         else
             ++it;
     }
+}
+
+tasks_map_ptr tasks_monitor_impl::active_tasks()
+{
+    m_stamp++;
+
+    tasks_refresh_list tl;
+    refresh_tasks( tl );
+    update_tasks_map( tl );
 
     return m_tasks;
 }
