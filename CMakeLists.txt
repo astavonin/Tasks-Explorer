@@ -28,6 +28,7 @@ SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
 
 enable_testing()
 
+add_subdirectory( externals/fmt )
 add_subdirectory( rpc )
 add_subdirectory( tasksexplorerd )
 add_subdirectory( client/console )

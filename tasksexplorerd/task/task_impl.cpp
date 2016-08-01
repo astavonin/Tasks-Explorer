@@ -4,8 +4,7 @@
 #include "utils.h"
 #include <assert.h>
 #include <ctime>
-//#include <fmt/format.h>
-#include <iostream>
+#include <fmt/format.h>
 #include <mach/mach.h>
 #include <prettyprint.hpp>
 #include <sstream>
@@ -39,10 +38,9 @@ task_impl::usage_info task_impl::process_task_data()
     auto   ret = task_for_pid( mach_task_self(), m_pid, &task );
     if( ret != KERN_SUCCESS )
     {
-        std::stringstream ss;
-        ss << "task_for_pid(" << m_pid << ") failed";
         BOOST_THROW_EXCEPTION( err::sys_api_error()
-                               << err::description( ss.str() )
+                               << err::description( fmt::format(
+                                      "task_for_pid({}) failed", m_pid ) )
                                << err::mach_error( ret ) );
     }
     struct task_basic_info_64 ti;
@@ -52,11 +50,10 @@ task_impl::usage_info task_impl::process_task_data()
     ret   = task_info( task, TASK_BASIC_INFO_64, (task_info_t)&ti, &count );
     if( ret != KERN_SUCCESS )
     {
-        std::stringstream ss;
-        ss << "task_info(" << m_pid << ") failed";
-        BOOST_THROW_EXCEPTION( err::sys_api_error()
-                               << err::description( ss.str() )
-                               << err::mach_error( ret ) );
+        BOOST_THROW_EXCEPTION(
+            err::sys_api_error()
+            << err::description( fmt::format( "task_info({}) failed", m_pid ) )
+            << err::mach_error( ret ) );
     }
 
     m_real_mem_size    = ti.resident_size;
@@ -148,7 +145,7 @@ void task_impl::read_task_info( timeval elapsed, bool new_task )
         auto usage = process_task_data();
         process_cpu_usage( new_task, elapsed, usage );
     }
-    catch(boost::exception &ex)
+    catch( boost::exception &ex )
     {
         // TODO: log error
     }

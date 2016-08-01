@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.4)
 
+include(ExternalProject)
+
 set(PROJECT_NAME tasksexplorerd)
 project(${PROJECT_NAME})
 

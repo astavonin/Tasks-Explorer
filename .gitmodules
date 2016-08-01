@@ -7,3 +7,6 @@
 [submodule "externals/spdlog"]
 	path = externals/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "externals/fmt"]
+	path = externals/fmt
+	url = https://github.com/fmtlib/fmt
