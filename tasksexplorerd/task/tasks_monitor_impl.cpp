@@ -1,12 +1,12 @@
 #include "tasks_monitor_impl.h"
+#include <assert.h>
+#include <mach/host_priv.h>
+#include <ctime>
+#include <list>
 #include "errors.h"
 #include "system_helpers.h"
 #include "task_impl.h"
 #include "utils.h"
-#include <assert.h>
-#include <ctime>
-#include <list>
-#include <mach/host_priv.h>
 
 namespace tasks
 {
@@ -47,8 +47,9 @@ void tasks_monitor_impl::refresh_tasks( tasks_refresh_list &tl )
         auto task = m_tasks->find( pid );
         if( task == m_tasks->end() )
         {
-            auto f = utils::async( [&proc, &elapsed, this ]() -> auto {
-                return std::make_shared<task_impl>( m_stamp, elapsed, proc, m_log );
+            auto f = std::async( [&proc, &elapsed, this ]() -> auto {
+                return std::make_shared<task_impl>( m_stamp, elapsed, proc,
+                                                    m_log );
             } );
             tl.emplace_back( std::move( f ) );
         }
@@ -93,6 +94,15 @@ tasks_map_ptr tasks_monitor_impl::active_tasks()
 
 void tasks_monitor_impl::dump( std::ostream &os ) const
 {
+    os << "class tasks_monitor_impl(0x" << std::hex << (long)this << std::dec
+       << ") \n{\n"
+       << "tasks count: " << m_tasks->size() << "\n"
+       << "m_refresh_time: " << m_refresh_time.tv_sec << " sec, "
+       << m_refresh_time.tv_usec << " usec" << std::dec << "\n"
+       << "m_stamp: " << m_stamp << std::dec << "\n"
+       << "m_hostPort: " << std::hex << m_hostPort << std::dec << "\n"
+       << "m_log: " << std::hex << m_log.get() << std::dec << "\n"
+       << "}";
 }
 
 tasks_monitor_ptr create_tasks_monitor( mach_port_t hostPort,

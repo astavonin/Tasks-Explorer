@@ -25,5 +25,9 @@ message Task {
   string path_name = 3;
   repeated string args = 4;
   map<string, string> envs = 5;
+  float cpu_usage_user = 6;
+  float cpu_usage_kernel = 7;
+  uint64 real_mem_size = 8;
+  uint64 virtual_mem_size = 9;
 }
 

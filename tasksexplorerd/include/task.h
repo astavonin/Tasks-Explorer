@@ -26,5 +26,9 @@ public:
     virtual pid_t                    pid() const       = 0;
     virtual std::vector<std::string> argv() const      = 0;
     virtual std::unordered_map<std::string, std::string> envv() const = 0;
+    virtual float cpu_usage_user() const     = 0;
+    virtual float cpu_usage_kernel() const = 0;
+    virtual int   real_mem_size() const    = 0;
+    virtual int   virtual_mem_size() const = 0;
 };
 }

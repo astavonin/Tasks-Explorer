@@ -1,13 +1,13 @@
 #pragma once
 
-#include "logger.h"
-#include "task.h"
+#include <sys/sysctl.h>
 #include <ctime>
 #include <string>
-#include <sys/sysctl.h>
 #include <tuple>
 #include <unordered_map>
 #include <vector>
+#include "logger.h"
+#include "task.h"
 
 namespace tasks
 {
@@ -25,6 +25,10 @@ public:
     virtual pid_t                    pid() const override;
     virtual std::vector<std::string> argv() const override;
     virtual std::unordered_map<std::string, std::string> envv() const override;
+    virtual float cpu_usage_user() const override;
+    virtual float cpu_usage_kernel() const override;
+    virtual int   real_mem_size() const override;
+    virtual int   virtual_mem_size() const override;
 
     virtual void dump( std::ostream &os ) const override;
 

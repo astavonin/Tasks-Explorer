@@ -1,6 +1,7 @@
 #include <spdlog/spdlog.h>
 #include <boost/exception/all.hpp>
 #include <boost/test/unit_test.hpp>
+#include <iostream>
 #include <memory>
 #include "../task/task_impl.h"
 #include "../task/tasks_monitor_impl.h"
@@ -13,6 +14,7 @@ BOOST_AUTO_TEST_CASE( active_tasks )
     {
         auto logger =
             spdlog::stdout_logger_mt( "active_tasks", true /*use color*/ );
+        //logger->set_level( spdlog::level::debug );
 
         tasks::tasks_monitor_impl tm( mach_host_self(), logger );
         auto                tasks = tm.active_tasks();

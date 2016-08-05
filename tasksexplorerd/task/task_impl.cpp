@@ -1,14 +1,15 @@
 #include "task_impl.h"
-#include "errors.h"
-#include "system_helpers.h"
-#include "utils.h"
 #include <assert.h>
-#include <ctime>
 #include <fmt/format.h>
 #include <mach/mach.h>
+#include <boost/exception/diagnostic_information.hpp>
+#include <ctime>
 #include <prettyprint.hpp>
 #include <sstream>
 #include <vector>
+#include "errors.h"
+#include "system_helpers.h"
+#include "utils.h"
 
 inline timeval to_timeval( time_value_t tv )
 {
@@ -19,11 +20,11 @@ namespace tasks
 {
 task_impl::task_impl( std::uintmax_t stamp, timeval elapsed,
                       const kinfo_proc &proc, logger_ptr logger )
-    : m_proc( proc )
-    , m_log( logger )
-    , m_stamp( stamp )
+    : m_proc( proc ), m_log( logger ), m_stamp( stamp )
 {
     assert( m_log.get() != nullptr );
+
+    m_pid = m_proc.kp_proc.p_pid;
 
     read_task_info( elapsed, true );
 }
@@ -137,17 +138,21 @@ void task_impl::process_cpu_usage( bool new_task, timeval elapsed,
 
 void task_impl::read_task_info( timeval elapsed, bool new_task )
 {
-    m_pid = m_proc.kp_proc.p_pid;
-
     try
     {
+        m_log->debug( "{}: processing task. PID {}", __func__, m_pid );
         process_proc_args();
         auto usage = process_task_data();
         process_cpu_usage( new_task, elapsed, usage );
+        m_log->debug( "{}: processing complete. PID {}", __func__, m_pid );
     }
     catch( boost::exception &ex )
     {
-        // TODO: log error
+        m_log->info( boost::diagnostic_information( ex ) );
+    }
+    catch( std::exception &ex )
+    {
+        m_log->info( ex.what() );
     }
 }
 
@@ -182,13 +187,38 @@ std::unordered_map<std::string, std::string> task_impl::envv() const
     return m_env;
 }
 
+float task_impl::cpu_usage_user() const
+{
+    return m_cpu_usage_user;
+}
+
+float task_impl::cpu_usage_kernel() const
+{
+    return m_cpu_usage_kernel;
+}
+
+int task_impl::real_mem_size() const
+{
+    return m_real_mem_size;
+}
+
+int task_impl::virtual_mem_size() const
+{
+    return m_virtual_mem_size;
+}
+
 void task_impl::dump( std::ostream &os ) const
 {
-    os << "class Task(0x" << std::hex << (long)this << std::dec << ") \n{\n"
+    os << "class task_impl(0x" << std::hex << (long)this << std::dec
+       << ") \n{\n"
        << "m_pid: " << m_pid << "\n"
        << "m_stamp: " << m_stamp << "\n"
        << "m_app_name: " << m_app_name << "\n"
        << "m_full_path_name: " << m_path_name << "\n"
+       << "m_cpu_usage_user: " << m_cpu_usage_user << "\n"
+       << "m_cpu_usage_kernel: " << m_cpu_usage_kernel << "\n"
+       << "m_real_mem_size: " << m_real_mem_size << "\n"
+       << "m_virtual_mem_size: " << m_virtual_mem_size << "\n"
        << "m_argv(" << m_argv.size() << "):" << m_argv << "\n"
        << "m_env(" << m_env.size() << "):" << m_env << "\n"
        << "m_log: " << std::hex << m_log.get() << std::dec << "\n"

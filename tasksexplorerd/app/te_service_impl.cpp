@@ -19,6 +19,11 @@ te_rpc::Task toRpc( const tasks::task_ptr t )
         envs[env.first] = env.second;
     }
 
+    tmp.set_cpu_usage_user( t->cpu_usage_user() );
+    tmp.set_cpu_usage_kernel( t->cpu_usage_kernel() );
+    tmp.set_real_mem_size( t->real_mem_size() );
+    tmp.set_virtual_mem_size( t->virtual_mem_size() );
+
     return tmp;
 }
 
